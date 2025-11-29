@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phnom Penh Coffee - Premium Coffee Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .hero-slide {
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modal {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .cart-modal {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #92400e 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-padding {
+            padding: 5rem 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #92400e 0%, #d97706 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(146, 64, 14, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #fef3c7;
+            color: #92400e;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #fde68a;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #fbbf24;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stagger-animation > * {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+        
+        .stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+        .stagger-animation > *:nth-child(6) { animation-delay: 0.6s; }
+        
+        .backdrop-blur {
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-amber-50">
+    <!-- Navigation Bar -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50 backdrop-blur bg-amber-900/95">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <div class="bg-amber-500 p-2 rounded-lg mr-3">
+                        <i class="fas fa-coffee text-white text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl">Phnom Penh Coffee</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link hover:text-amber-300 transition py-2">Home</a>
+                    <a href="#products" class="nav-link hover:text-amber-300 transition py-2">Products</a>
+                    <a href="#about" class="nav-link hover:text-amber-300 transition py-2">About</a>
+                    <a href="#contact" class="nav-link hover:text-amber-300 transition py-2">Contact</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="cart-button" class="relative bg-amber-800 hover:bg-amber-700 p-2 rounded-lg transition">
+                        <i class="fas fa-shopping-cart text-xl text-amber-200"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-amber-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">0</span>
+                    </button>
+                    <button class="md:hidden bg-amber-800 hover:bg-amber-700 p-2 rounded-lg transition" id="mobile-menu-button">
+                        <i class="fas fa-bars text-xl text-amber-200"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-amber-700 pt-4">
+                <a href="#" class="block py-3 hover:text-amber-300 transition border-b border-amber-800">Home</a>
+                <a href="#products" class="block py-3 hover:text-amber-300 transition border-b border-amber-800">Products</a>
+                <a href="#about" class="block py-3 hover:text-amber-300 transition border-b border-amber-800">About</a>
+                <a href="#contact" class="block py-3 hover:text-amber-300 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Products Section -->
+    <section id="products" class="section-padding bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-4">Our Coffee Selection</h2>
+                <p class="text-amber-700 max-w-2xl mx-auto">Discover our carefully curated selection of premium coffees, each with its own unique character and flavor profile.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-animation">
+                <!-- Product Card 1 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1587734195503-904fca47e0e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Arabica Coffee" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                        <span class="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium">Best Seller</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Arabica Blend</h3>
+                        <p class="text-amber-700 mb-4">Smooth and aromatic with notes of chocolate and caramel.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$12.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="1">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="1">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 2 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Robusta Coffee" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Robusta Premium</h3>
+                        <p class="text-amber-700 mb-4">Strong and bold with a rich, earthy flavor profile.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$10.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="2">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="2">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 3 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Espresso Blend" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Espresso Roast</h3>
+                        <p class="text-amber-700 mb-4">Dark and intense, perfect for espresso lovers.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$14.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="3">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="3">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 4 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cold Brew" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Cold Brew Blend</h3>
+                        <p class="text-amber-700 mb-4">Smooth and refreshing, specially crafted for cold brewing.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$13.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="4">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="4">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 5 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1510707577719-ae7c9b788690?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Single Origin" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                        <span class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Organic</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Single Origin</h3>
+                        <p class="text-amber-700 mb-4">Pure and distinctive flavors from Cambodia's highlands.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$16.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="5">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="5">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 6 -->
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1587734195503-904fca47e0e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Decaf Blend" class="w-full h-48 object-cover transition duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Decaf Blend</h3>
+                        <p class="text-amber-700 mb-4">All the flavor without the caffeine, perfect for evening enjoyment.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-900 font-bold text-lg">$11.99</span>
+                            <div class="flex space-x-2">
+                                <button class="view-detail-btn bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg transition font-medium" data-product="6">View Details</button>
+                                <button class="add-to-cart-btn btn-primary text-white px-4 py-2 rounded-lg transition font-medium" data-product="6">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-amber-500 p-2 rounded-lg mr-3">
+                            <i class="fas fa-coffee text-white text-xl"></i>
+                        </div>
+                        <span class="font-bold text-xl">Phnom Penh Coffee</span>
+                    </div>
+                    <p class="text-amber-200">Premium coffee experience from the heart of Cambodia.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-amber-200 hover:text-white transition">Home</a></li>
+                        <li><a href="#products" class="text-amber-200 hover:text-white transition">Products</a></li>
+                        <li><a href="#about" class="text-amber-200 hover:text-white transition">About Us</a></li>
+                        <li><a href="#contact" class="text-amber-200 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-amber-200 hover:text-white transition bg-amber-800 hover:bg-amber-700 p-3 rounded-lg"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-amber-200 hover:text-white transition bg-amber-800 hover:bg-amber-700 p-3 rounded-lg"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-amber-200 hover:text-white transition bg-amber-800 hover:bg-amber-700 p-3 rounded-lg"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-amber-200 hover:text-white transition bg-amber-800 hover:bg-amber-700 p-3 rounded-lg"><i class="fab fa-tiktok text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Newsletter</h4>
+                    <p class="text-amber-200 mb-2">Subscribe for updates and special offers</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-3 rounded-l-lg w-full text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <button class="btn-primary text-white px-4 py-3 rounded-r-lg transition font-medium">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-amber-800 mt-8 pt-8 text-center text-amber-200">
+                <p>&copy; 2023 Phnom Penh Coffee. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal backdrop-blur">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modal-product-name" class="text-2xl font-bold text-amber-900">Product Name</h3>
+                    <button id="close-modal" class="text-amber-700 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 p-2 rounded-lg transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="lg:w-1/2">
+                        <img id="modal-product-image" src="" alt="Product" class="w-full h-80 object-cover rounded-xl shadow-lg">
+                    </div>
+                    
+                    <div class="lg:w-1/2">
+                        <p id="modal-product-description" class="text-amber-700 mb-6 text-lg">Product description will appear here.</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-amber-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-amber-800 mb-2">Flavor Notes</h4>
+                                <p id="modal-flavor-notes" class="text-amber-700">Chocolate, Caramel, Nutty</p>
+                            </div>
+                            
+                            <div class="bg-amber-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-amber-800 mb-2">Roast Level</h4>
+                                <p id="modal-roast-level" class="text-amber-700">Medium</p>
+                            </div>
+                            
+                            <div class="bg-amber-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-amber-800 mb-2">Origin</h4>
+                                <p id="modal-origin" class="text-amber-700">Cambodia Highlands</p>
+                            </div>
+                            
+                            <div class="bg-amber-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-amber-800 mb-2">Caffeine</h4>
+                                <p class="text-amber-700">Medium</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mt-6 pt-6 border-t border-amber-200">
+                            <div>
+                                <span id="modal-product-price" class="text-3xl font-bold text-amber-900">$0.00</span>
+                                <p class="text-amber-600 text-sm">Free shipping on orders over $50</p>
+                            </div>
+                            <button id="modal-add-to-cart" class="btn-primary text-white px-8 py-3 rounded-lg font-bold transition">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden cart-modal backdrop-blur">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-amber-900">Your Cart</h3>
+                    <button id="close-cart-modal" class="text-amber-700 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 p-2 rounded-lg transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="cart-items" class="mb-6 max-h-96 overflow-y-auto">
+                    <!-- Cart items will be dynamically added here -->
+                    <p id="empty-cart-message" class="text-amber-700 text-center py-8">Your cart is empty</p>
+                </div>
+                
+                <div class="border-t border-amber-200 pt-6 mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-amber-700">Subtotal</span>
+                        <span id="cart-subtotal" class="text-amber-900 font-bold text-lg">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-amber-700">Shipping</span>
+                        <span class="text-amber-900 font-bold">$2.99</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xl pt-3 border-t border-amber-200">
+                        <span class="text-amber-900 font-bold">Total</span>
+                        <span id="cart-total" class="text-amber-900 font-bold">$2.99</span>
+                    </div>
+                </div>
+                
+                <button id="checkout-button" class="btn-primary text-white w-full py-4 rounded-lg font-bold transition mb-4">Proceed to Checkout</button>
+                
+                <button id="continue-shopping" class="btn-secondary w-full py-4 rounded-lg font-bold transition">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Form Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal backdrop-blur">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-amber-900">Complete Your Order</h3>
+                    <button id="close-checkout-modal" class="text-amber-700 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 p-2 rounded-lg transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="order-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="full-name" class="block text-amber-700 mb-2 font-medium">Full Name *</label>
+                            <input type="text" id="full-name" required class="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition">
+                        </div>
+                        
+                        <div>
+                            <label for="phone-number" class="block text-amber-700 mb-2 font-medium">Phone Number *</label>
+                            <input type="tel" id="phone-number" required class="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="address" class="block text-amber-700 mb-2 font-medium">Delivery Address *</label>
+                        <textarea id="address" rows="3" required class="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="special-notes" class="block text-amber-700 mb-2 font-medium">Special Instructions (Optional)</label>
+                        <textarea id="special-notes" rows="2" class="w-full px-4 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"></textarea>
+                    </div>
+                    
+                    <div class="border-t border-amber-200 pt-6 mb-6">
+                        <h4 class="font-bold text-amber-800 mb-4 text-lg">Order Summary</h4>
+                        <div id="order-summary" class="text-amber-700 mb-4 space-y-2">
+                            <!-- Order summary will be dynamically added here -->
+                        </div>
+                        <div class="flex justify-between items-center text-xl pt-4 border-t border-amber-200">
+                            <span class="text-amber-900 font-bold">Total</span>
+                            <span id="order-total" class="text-amber-900 font-bold">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary text-white w-full py-4 rounded-lg font-bold transition">Place Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal backdrop-blur">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center">
+            <div class="text-green-500 text-6xl mb-6">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-amber-900 mb-4">Order Placed Successfully!</h3>
+            <p class="text-amber-700 mb-8">Thank you for your order. We'll contact you shortly to confirm delivery details.</p>
+            <button id="close-success-modal" class="btn-primary text-white px-8 py-3 rounded-lg font-bold transition">Continue Shopping</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
